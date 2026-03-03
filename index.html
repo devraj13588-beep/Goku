@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Devraj's Game Zone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff00cc, #3333ff);
+            color: white;
+            text-align: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            padding: 30px;
+            font-size: 40px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .game-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            width: 280px;
+            margin: 20px;
+            padding: 20px;
+            transition: 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .play-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 25px;
+            background: #00ffcc;
+            color: black;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s ease;
+        }
+
+        .play-btn:hover {
+            background: #fffb00;
+            transform: scale(1.05);
+        }
+
+        /* Overlay */
+        #game-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        iframe {
+            width: 85%;
+            height: 85%;
+            margin-top: 4%;
+            border: 5px solid #00ffcc;
+            border-radius: 12px;
+            background: black;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.2);
+            color: #ff4444;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎮 Prince's Game Zone 🚀</h1>
+
+    <div class="container">
+        <div class="game-card">
+            <h2>My First Unity Game</h2>
+            <p>Try my awesome WebGL project!</p>
+            <button onclick="openGame('deploy/index.html')" class="play-btn">
+                Play Now
+            </button>
+        </div>
+
+        <div class="game-card">
+            <h2>Coming Soon 🔥</h2>
+            <p>More crazy games dropping soon.</p>
+            <button class="play-btn" style="opacity:0.5; cursor:not-allowed;">
+                Soon
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div id="game-overlay">
+        <span class="close-btn" onclick="closeGame()">✖</span>
+        <iframe id="game-frame" src="" allow="fullscreen"></iframe>
+    </div>
+
+    <footer>
+        © 2026 Prince 🗿 | Made with Unity
+    </footer>
+
+    <script>
+        function openGame(url) {
+            document.getElementById("game-frame").src = url;
+            document.getElementById("game-overlay").style.display = "block";
+            document.body.style.overflow = "hidden"; // prevent scrolling
+        }
+
+        function closeGame() {
+            document.getElementById("game-overlay").style.display = "none";
+            document.getElementById("game-frame").src = "";
+            document.body.style.overflow = "auto";
+        }
+
+        // Close when ESC is pressed
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape") {
+                closeGame();
+            }
+        });
+    </script>
+
+</body>
+</html>
