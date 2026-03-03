@@ -1,166 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Devraj's Game Zone</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ff00cc, #3333ff);
-            color: white;
-            text-align: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        h1 {
-            padding: 30px;
-            font-size: 40px;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 20px;
-        }
-
-        .game-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 15px;
-            width: 280px;
-            margin: 20px;
-            padding: 20px;
-            transition: 0.3s ease;
-        }
-
-        .game-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255,255,255,0.2);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-
-        .play-btn {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 12px 25px;
-            background: #00ffcc;
-            color: black;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            transition: 0.2s ease;
-        }
-
-        .play-btn:hover {
-            background: #fffb00;
-            transform: scale(1.05);
-        }
-
-        /* Overlay */
-        #game-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        iframe {
-            width: 85%;
-            height: 85%;
-            margin-top: 4%;
-            border: 5px solid #00ffcc;
-            border-radius: 12px;
-            background: black;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            font-size: 40px;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .close-btn:hover {
-            transform: scale(1.2);
-            color: #ff4444;
-        }
-
-        footer {
-            margin-top: 50px;
-            padding: 20px;
-            background: rgba(0,0,0,0.4);
-        }
-    </style>
-</head>
-
-<body>
-
-    <h1>🎮 Prince's Game Zone 🚀</h1>
-
-    <div class="container">
-        <div class="game-card">
-            <h2>My First Unity Game</h2>
-            <p>Try my awesome WebGL project!</p>
-            <button onclick="openGame('deploy/index.html')" class="play-btn">
-                Play Now
-            </button>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | Funny Cars</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
-
-        <div class="game-card">
-            <h2>Coming Soon 🔥</h2>
-            <p>More crazy games dropping soon.</p>
-            <button class="play-btn" style="opacity:0.5; cursor:not-allowed;">
-                Soon
-            </button>
-        </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+        <div id="unity-logo-title-footer"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">Funny Cars</div>
+      </div>
     </div>
-
-    <!-- Overlay -->
-    <div id="game-overlay">
-        <span class="close-btn" onclick="closeGame()">✖</span>
-        <iframe id="game-frame" src="" allow="fullscreen"></iframe>
-    </div>
-
-    <footer>
-        © 2026 Prince 🗿 | Made with Unity
-    </footer>
-
     <script>
-        function openGame(url) {
-            document.getElementById("game-frame").src = url;
-            document.getElementById("game-overlay").style.display = "block";
-            document.body.style.overflow = "hidden"; // prevent scrolling
-        }
+      var canvas = document.querySelector("#unity-canvas");
 
-        function closeGame() {
-            document.getElementById("game-overlay").style.display = "none";
-            document.getElementById("game-frame").src = "";
-            document.body.style.overflow = "auto";
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
         }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
 
-        // Close when ESC is pressed
-        document.addEventListener("keydown", function(e) {
-            if (e.key === "Escape") {
-                closeGame();
-            }
-        });
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/Game Stuff.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/Game Stuff.data",
+        frameworkUrl: buildUrl + "/Game Stuff.framework.js",
+        codeUrl: buildUrl + "/Game Stuff.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Dev0Prince",
+        productName: "Funny Cars",
+        productVersion: "0.1.0",
+        showBanner: unityShowBanner,
+      };
+
+      // By default, Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+
+      // If you would like all file writes inside Unity Application.persistentDataPath
+      // directory to automatically persist so that the contents are remembered when
+      // the user revisits the site the next time, uncomment the following line:
+      // config.autoSyncPersistentDataPath = true;
+      // This autosyncing is currently not the default behavior to avoid regressing
+      // existing user projects that might rely on the earlier manual
+      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
+      // expected to change.
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        document.querySelector("#unity-container").className = "unity-mobile";
+        canvas.className = "unity-mobile";
+
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
+
+
+      } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
+
+      document.querySelector("#unity-loading-bar").style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+              }).then((unityInstance) => {
+                document.querySelector("#unity-loading-bar").style.display = "none";
+                document.querySelector("#unity-fullscreen-button").onclick = () => {
+                  unityInstance.SetFullscreen(1);
+                };
+
+              }).catch((message) => {
+                alert(message);
+              });
+            };
+
+      document.body.appendChild(script);
+
     </script>
-
-</body>
+  </body>
 </html>
